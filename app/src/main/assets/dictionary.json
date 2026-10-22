@@ -1,0 +1,316 @@
+{
+  "metadata": {
+    "schema_version": "1.0",
+    "dictionary_version": "alpha-1",
+    "created_date": "2026-06-01",
+    "id_ranges": {
+      "ingredients": {
+        "1-20": "assigned"
+      },
+      "categories": {
+        "1-6": "assigned"
+      }
+    }
+  },
+
+  "ingredients": [
+    {
+      "id": 1,
+      "name": "Sugar",
+      "aliases": ["Sucrose"],
+      "ingredient_type": "sweetener"
+    },
+    {
+      "id": 2,
+      "name": "Wheat Flour",
+      "aliases": ["Refined Wheat Flour", "Maida"],
+      "ingredient_type": "grain"
+    },
+    {
+      "id": 3,
+      "name": "Rice Flour",
+      "aliases": [],
+      "ingredient_type": "grain"
+    },
+    {
+      "id": 4,
+      "name": "Corn Starch",
+      "aliases": ["Maize Starch"],
+      "ingredient_type": "starch"
+    },
+    {
+      "id": 5,
+      "name": "Salt",
+      "aliases": ["Sodium Chloride"],
+      "ingredient_type": "mineral"
+    },
+    {
+      "id": 6,
+      "name": "Sunflower Oil",
+      "aliases": [],
+      "ingredient_type": "oil"
+    },
+    {
+      "id": 7,
+      "name": "Palm Oil",
+      "aliases": [],
+      "ingredient_type": "oil"
+    },
+    {
+      "id": 8,
+      "name": "Milk Powder",
+      "aliases": ["Dried Milk"],
+      "ingredient_type": "dairy"
+    },
+    {
+      "id": 9,
+      "name": "Whey Protein",
+      "aliases": ["Whey Solids"],
+      "ingredient_type": "dairy"
+    },
+    {
+      "id": 10,
+      "name": "Cocoa Powder",
+      "aliases": [],
+      "ingredient_type": "flavoring"
+    },
+    {
+      "id": 11,
+      "name": "Soy Lecithin",
+      "aliases": ["Lecithin"],
+      "ingredient_type": "emulsifier"
+    },
+    {
+      "id": 12,
+      "name": "Xanthan Gum",
+      "aliases": [],
+      "ingredient_type": "stabilizer"
+    },
+    {
+      "id": 13,
+      "name": "Citric Acid",
+      "aliases": ["E330"],
+      "ingredient_type": "acidity_regulator"
+    },
+    {
+      "id": 14,
+      "name": "Potassium Sorbate",
+      "aliases": ["E202"],
+      "ingredient_type": "preservative"
+    },
+    {
+      "id": 15,
+      "name": "Sodium Benzoate",
+      "aliases": ["E211"],
+      "ingredient_type": "preservative"
+    },
+    {
+      "id": 16,
+      "name": "Natural Flavor",
+      "aliases": ["Natural Flavour"],
+      "ingredient_type": "flavoring"
+    },
+    {
+      "id": 17,
+      "name": "Vanilla Extract",
+      "aliases": [],
+      "ingredient_type": "flavoring"
+    },
+    {
+      "id": 18,
+      "name": "Vitamin C",
+      "aliases": ["Ascorbic Acid"],
+      "ingredient_type": "vitamin"
+    },
+    {
+      "id": 19,
+      "name": "Calcium Carbonate",
+      "aliases": [],
+      "ingredient_type": "mineral"
+    },
+    {
+      "id": 20,
+      "name": "Caramel Color",
+      "aliases": ["E150"],
+      "ingredient_type": "coloring"
+    }
+  ],
+
+  "allergens": [
+    {
+      "bit_position": 0,
+      "name": "Milk",
+      "severity": "high"
+    },
+    {
+      "bit_position": 1,
+      "name": "Egg",
+      "severity": "high"
+    },
+    {
+      "bit_position": 2,
+      "name": "Peanut",
+      "severity": "high"
+    },
+    {
+      "bit_position": 3,
+      "name": "Tree Nut",
+      "severity": "high"
+    },
+    {
+      "bit_position": 4,
+      "name": "Soy",
+      "severity": "medium"
+    },
+    {
+      "bit_position": 5,
+      "name": "Wheat",
+      "severity": "high"
+    },
+    {
+      "bit_position": 6,
+      "name": "Fish",
+      "severity": "high"
+    },
+    {
+      "bit_position": 7,
+      "name": "Shellfish",
+      "severity": "high"
+    },
+    {
+      "bit_position": 8,
+      "name": "Sesame",
+      "severity": "medium"
+    },
+    {
+      "bit_position": 9,
+      "name": "Sulfites",
+      "severity": "medium"
+    }
+  ],
+
+  "warnings": [
+    {
+      "bit_position": 0,
+      "name": "Refrigerate After Opening",
+      "priority": "medium"
+    },
+    {
+      "bit_position": 1,
+      "name": "Contains Artificial Sweeteners",
+      "priority": "medium"
+    },
+    {
+      "bit_position": 2,
+      "name": "High Caffeine Content",
+      "priority": "high"
+    },
+    {
+      "bit_position": 3,
+      "name": "Not Suitable For Infants",
+      "priority": "high"
+    },
+    {
+      "bit_position": 4,
+      "name": "Phenylalanine Source",
+      "priority": "high"
+    }
+  ],
+
+  "dietary_attributes": [
+    {
+      "bit_position": 0,
+      "name": "Vegetarian"
+    },
+    {
+      "bit_position": 1,
+      "name": "Vegan"
+    },
+    {
+      "bit_position": 2,
+      "name": "Halal"
+    },
+    {
+      "bit_position": 3,
+      "name": "Kosher"
+    },
+    {
+      "bit_position": 4,
+      "name": "Gluten Free"
+    },
+    {
+      "bit_position": 5,
+      "name": "Dairy Free"
+    },
+    {
+      "bit_position": 6,
+      "name": "Organic"
+    }
+  ],
+
+  "categories": [
+    {
+      "id": 1,
+      "name": "Food",
+      "parent_category": null
+    },
+    {
+      "id": 2,
+      "name": "Beverage",
+      "parent_category": null
+    },
+    {
+      "id": 3,
+      "name": "Breakfast Cereal",
+      "parent_category": "Food"
+    },
+    {
+      "id": 4,
+      "name": "Chocolate Confectionery",
+      "parent_category": "Food"
+    },
+    {
+      "id": 5,
+      "name": "Soft Drink",
+      "parent_category": "Beverage"
+    },
+    {
+      "id": 6,
+      "name": "Dairy Product",
+      "parent_category": "Food"
+    }
+  ],
+
+  "nutrition_fields": [
+    {
+      "position": 0,
+      "name": "Calories",
+      "unit": "kcal"
+    },
+    {
+      "position": 1,
+      "name": "Protein",
+      "unit": "g"
+    },
+    {
+      "position": 2,
+      "name": "Total Fat",
+      "unit": "g"
+    },
+    {
+      "position": 3,
+      "name": "Carbohydrate",
+      "unit": "g"
+    },
+    {
+      "position": 4,
+      "name": "Sugar",
+      "unit": "g"
+    },
+    {
+      "position": 5,
+      "name": "Sodium",
+      "unit": "mg"
+    }
+  ]
+}
