@@ -59,26 +59,11 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeec
     private var nfcAdapter: NfcAdapter? = null
     private var tts: TextToSpeech? = null
     private var appState by mutableStateOf<AppState>(AppState.WaitingForUser)
-    private var demoIndex = 0
     
     private val TAG_APP = "AccessibilityScanner"
     private val TAG_NFC = "NFCScanner"
     private val TAG_TTS = "TTS"
     private val TAG_HAPTICS = "Haptics"
-
-    private fun getDemoPayloads(): List<String> {
-        val baseDate = java.time.LocalDate.of(2020, 1, 1)
-        val today = java.time.LocalDate.now()
-        val safeDays = java.time.temporal.ChronoUnit.DAYS.between(baseDate, today.plusDays(200)).toInt()
-        val warningDays = java.time.temporal.ChronoUnit.DAYS.between(baseDate, today.plusDays(12)).toInt()
-        val expiredDays = java.time.temporal.ChronoUnit.DAYS.between(baseDate, today.minusDays(5)).toInt()
-
-        return listOf(
-            """{"b":"Kellogg's","p":"Chocos (Safe)","c":3,"a":49,"w":0,"d":1,"e":$safeDays,"n":[412,78,51,294,29,310],"i":[1,2,8,10]}""",
-            """{"b":"Kellogg's","p":"Chocos (Warning)","c":3,"a":49,"w":0,"d":1,"e":$warningDays,"n":[412,78,51,294,29,310],"i":[1,2,8,10]}""",
-            """{"b":"Kellogg's","p":"Chocos (Expired)","c":3,"a":49,"w":0,"d":1,"e":$expiredDays,"n":[412,78,51,294,29,310],"i":[1,2,8,10]}"""
-        )
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,8 +78,7 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeec
                 AppContent(
                     state = appState,
                     onTap = { handleGlobalTap() },
-                    onSwipeUp = { handleSwipeUp() },
-                    onRunDemo = { runDemoScan() }
+                    onSwipeUp = { handleSwipeUp() }
                 )
             }
         }
@@ -271,35 +255,14 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeec
         speak(details)
     }
 
-    private fun runDemoScan() {
-        if (appState is AppState.WaitingForUser) activateScanning()
-        val payloads = getDemoPayloads()
-        val currentPayload = payloads[demoIndex]
-        demoIndex = (demoIndex + 1) % payloads.size
-        val product = PayloadDecoder.decodePayload(currentPayload)
-        if (product != null) {
-            appState = AppState.ProductView(product)
-            triggerSuccessHaptic()
-            announceProductSummary(product)
-        }
-    }
-
     override fun onDestroy() { tts?.stop(); tts?.shutdown(); super.onDestroy() }
     override fun onPause() { super.onPause(); disableNfc() }
     override fun onResume() { super.onResume(); if (appState is AppState.ScanningEnabled) enableNfc() }
 }
 
 @Composable
-fun AppContent(state: AppState, onTap: () -> Unit, onSwipeUp: () -> Unit, onRunDemo: () -> Unit) {
-    Scaffold(
-        bottomBar = {
-            Surface(tonalElevation = 3.dp, shadowElevation = 8.dp) {
-                Box(modifier = Modifier.fillMaxWidth().padding(16.dp).navigationBarsPadding()) {
-                    DemoButton(onRunDemo)
-                }
-            }
-        }
-    ) { innerPadding ->
+fun AppContent(state: AppState, onTap: () -> Unit, onSwipeUp: () -> Unit) {
+    Scaffold { innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding).pointerInput(state) { detectTapGestures(onTap = { onTap() }) }) {
             AnimatedContent(
                 targetState = state,
@@ -489,11 +452,4 @@ fun ErrorScreen(message: String) {
     }
 }
 
-@Composable
-fun DemoButton(onClick: () -> Unit) {
-    Button(onClick, Modifier.fillMaxWidth().height(64.dp), shape = RoundedCornerShape(20.dp)) {
-        Icon(Icons.Rounded.PlayArrow, null)
-        Spacer(Modifier.width(12.dp))
-        Text("RUN DEMO SCAN", fontWeight = FontWeight.ExtraBold, fontSize = 18.sp)
-    }
-}
+
