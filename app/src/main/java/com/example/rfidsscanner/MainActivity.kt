@@ -29,7 +29,6 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Event
 import androidx.compose.material.icons.rounded.Nfc
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.TapAndPlay
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.*
@@ -46,7 +45,9 @@ import androidx.compose.ui.unit.sp
 import com.example.rfidsscanner.ui.theme.RFIDSSCANNERTheme
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.abs
 
+/** UI states managed by MainActivity. */
 sealed class AppState {
     object WaitingForUser : AppState()
     object ScanningEnabled : AppState()
@@ -54,6 +55,10 @@ sealed class AppState {
     data class ScanFailed(val message: String) : AppState()
 }
 
+/**
+ * Main activity handling NFC reader mode callbacks, Text-to-Speech synthesis,
+ * haptic feedback vibration, and Jetpack Compose UI rendering.
+ */
 class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeech.OnInitListener {
 
     private var nfcAdapter: NfcAdapter? = null
@@ -67,8 +72,6 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeec
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG_APP, "App entered startup state")
-        
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         tts = TextToSpeech(this, this)
         
@@ -87,38 +90,29 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeec
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             tts?.language = Locale.US
-            Log.d(TAG_TTS, "TTS initialized successfully")
             if (appState is AppState.WaitingForUser) {
                 speak("Tap anywhere to enable scanning.")
             }
-        } else {
-            Log.e(TAG_TTS, "TTS initialization failed")
         }
     }
 
     private fun speak(text: String) {
-        Log.d(TAG_TTS, "TTS prompt started: \"$text\"")
         tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "prompt")
     }
 
+    /** Handles global touch gestures to toggle or restart scanning states. */
     private fun handleGlobalTap() {
         when (appState) {
-            is AppState.WaitingForUser -> {
-                Log.d(TAG_APP, "App entered scanning state")
+            is AppState.WaitingForUser, is AppState.ProductView, is AppState.ScanFailed -> {
                 activateScanning()
             }
-            is AppState.ProductView, is AppState.ScanFailed -> {
-                Log.d(TAG_APP, "Returned to scanning state")
-                activateScanning()
-            }
-            else -> {} // Already scanning
+            else -> {}
         }
     }
 
     private fun handleSwipeUp() {
         val currentState = appState
         if (currentState is AppState.ProductView) {
-            Log.d(TAG_APP, "Additional details revealed via scroll")
             announceAdditionalDetails(currentState.product)
         }
     }
@@ -126,26 +120,22 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeec
     private fun activateScanning() {
         tts?.stop()
         appState = AppState.ScanningEnabled
-        Log.d(TAG_APP, "Scanning enabled")
         triggerActivationHaptic()
         speak("Scanning now. Hold a product near your device.")
         enableNfc()
     }
 
     private fun triggerActivationHaptic() {
-        Log.d(TAG_HAPTICS, "Activation vibration triggered")
         vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 
     private fun triggerSuccessHaptic() {
-        Log.d(TAG_HAPTICS, "Success vibration triggered")
         val pattern = longArrayOf(0, 100, 50, 100)
         val amplitudes = intArrayOf(0, 255, 0, 255)
         vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1))
     }
 
     private fun triggerErrorHaptic() {
-        Log.d(TAG_HAPTICS, "Error vibration triggered")
         val pattern = longArrayOf(0, 50, 50, 50, 50, 50)
         val amplitudes = intArrayOf(0, 255, 0, 255, 0, 255)
         vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1))
@@ -179,8 +169,8 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeec
         nfcAdapter?.disableReaderMode(this)
     }
 
+    /** Intercepts NFC tags in reader mode and extracts NDEF payload strings. */
     override fun onTagDiscovered(tag: Tag?) {
-        Log.d(TAG_NFC, "Tag discovered")
         val startTime = System.currentTimeMillis()
         var isNdef = false
         val content = try {
@@ -208,8 +198,6 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeec
         runOnUiThread {
             if (content != null) {
                 val product = PayloadDecoder.decodePayload(content)
-                val duration = System.currentTimeMillis() - startTime
-                Log.d(TAG_NFC, "Total scan workflow completed in ${duration}ms")
                 if (product != null) {
                     appState = AppState.ProductView(product)
                     triggerSuccessHaptic()
@@ -220,9 +208,7 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback, TextToSpeec
                     speak("Unable to read tag.")
                 }
             } else if (tagDetected) {
-                // TAG DETECTED BUT NO CONTENT
                 val errorMsg = if (!isNdef) "Tag is not formatted for data" else "Tag is empty"
-                Log.d(TAG_NFC, errorMsg)
                 appState = AppState.ScanFailed(errorMsg)
                 triggerErrorHaptic()
                 speak(errorMsg)
@@ -370,7 +356,7 @@ fun SafetySection(product: Product) {
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text(if (product.expiryStatus == ExpiryStatus.EXPIRED) "EXPIRED" else "EXPIRY DATE", style = MaterialTheme.typography.labelSmall, color = expiryColor.copy(0.8f), fontWeight = FontWeight.Bold)
-                    Text(if (product.expiryStatus == ExpiryStatus.EXPIRED) "Expired ${kotlin.math.abs(product.daysRemaining)} days ago" else product.expiryDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")), style = MaterialTheme.typography.titleLarge, color = expiryColor, fontWeight = FontWeight.Bold)
+                    Text(if (product.expiryStatus == ExpiryStatus.EXPIRED) "Expired ${abs(product.daysRemaining)} days ago" else product.expiryDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")), style = MaterialTheme.typography.titleLarge, color = expiryColor, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -451,5 +437,3 @@ fun ErrorScreen(message: String) {
         }
     }
 }
-
-

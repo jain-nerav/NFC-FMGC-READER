@@ -2,12 +2,14 @@ package com.example.rfidsscanner
 
 import java.time.LocalDate
 
+/** Expiry condition categories relative to current date. */
 enum class ExpiryStatus {
     SAFE,
     WARNING,
     EXPIRED
 }
 
+/** Fully resolved product domain model used by UI and TTS. */
 data class Product(
     val brand: String,
     val product: String,
@@ -22,17 +24,15 @@ data class Product(
     val expiryStatus: ExpiryStatus
 )
 
-/**
- * Raw payload structure from NFC
- */
+/** Raw JSON payload structure read from NFC/RFID tags. */
 data class ProductPayload(
-    val b: String, // Brand
-    val p: String, // Product
-    val c: Int,    // Category ID
-    val a: Int,    // Allergen Bitmask
-    val w: Int,    // Warning Bitmask
-    val d: Int,    // Dietary Bitmask
-    val e: Int,    // Expiry Days since 2020-01-01
-    val n: List<Int>, // Nutrition values
-    val i: List<Int>  // Ingredient IDs
+    val b: String, // Brand name
+    val p: String, // Product name
+    val c: Int,    // Category ID reference
+    val a: Int,    // Allergen bitmask
+    val w: Int,    // Warning bitmask
+    val d: Int,    // Dietary attributes bitmask
+    val e: Int,    // Expiry days elapsed since 2020-01-01 epoch
+    val n: List<Int>, // Nutrition values array
+    val i: List<Int>  // Ingredient ID references
 )
